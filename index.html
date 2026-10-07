@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spill the beans!</title>
+<link rel="icon" id="fav" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Gochi+Hand&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--soft-rainbow:linear-gradient(135deg,#ffe3ee,#ffeede,#fffbe0,#e3fbef,#e1f1ff,#ece3ff);--pink:#ffc8dd;--lavender:#cdb4ff;--blue:#a9d6ff;--mint:#b8f2d6;--yellow:#fff2b2;--peach:#ffd6b0;
+--ink:#4a4063;--soft:#7d7396;--card:rgba(255,255,255,.85);
+--rainbow:linear-gradient(120deg,var(--pink),var(--peach),var(--yellow),var(--mint),var(--blue),var(--lavender));
+--shadow:0 18px 40px -12px rgba(150,120,200,.35);--r:28px}
+*{box-sizing:border-box;margin:0}
+/* Base colour lives on BODY so the multiply layer blends against it (aura gradient rule) */
+body{background-color:#faf8f2;font-family:"Nunito",system-ui,sans-serif;color:var(--ink)}
+h1,h2{font-family:"Fredoka",sans-serif;font-weight:600;line-height:1.15}
+.hidden{display:none!important}
+:focus-visible{outline:3px solid var(--lavender);outline-offset:3px}
+
+/* ===== Aura gradient: "Sakura Fields" (container has NO background) ===== */
+.aura-bg{position:relative;overflow:hidden;min-height:100vh}
+.layer{position:absolute;inset:0;pointer-events:none;transform:translateZ(0);will-change:transform}
+.l1{background:radial-gradient(circle at 20% 30%,rgba(251,113,133,.7) 0%,transparent 50%);filter:blur(150px)}
+.l2{background:radial-gradient(circle at 80% 20%,rgba(249,168,212,.6) 0%,transparent 45%);filter:blur(175px)}
+.l3{background:radial-gradient(circle at 60% 80%,rgba(253,164,175,.5) 0%,transparent 55%);filter:blur(200px)}
+.l4{background:radial-gradient(circle at 30% 70%,rgba(244,114,182,.4) 0%,transparent 40%);filter:blur(125px);mix-blend-mode:multiply}
+@media(min-width:768px){.l1{filter:blur(216px)}.l2{filter:blur(252px)}.l3{filter:blur(260px)}.l4{filter:blur(180px)}}
+.app{position:relative;z-index:1;min-height:100vh;display:grid;place-items:center;padding:24px 16px 90px}
+
+/* ===== Fades ===== */
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes logoIn{from{opacity:0;transform:scale(.7) rotate(-12deg)}to{opacity:1;transform:rotate(-4deg)}}
+.view{transition:opacity .5s}.fade-out{opacity:0}.fade-in{animation:fadeIn .7s both}
+
+/* ===== Intro ===== */
+.intro{text-align:center;display:flex;flex-direction:column;align-items:center;gap:26px}
+.logo{font:700 clamp(2.4rem,10vw,4.6rem)/1.1 "Fredoka",sans-serif;padding:.25em .5em;max-width:min(92vw,720px);border-radius:44px;border:6px solid #fff;background:var(--rainbow);box-shadow:var(--shadow);animation:logoIn 1s both}
+.tag{font-weight:700;font-size:1.1rem;animation:fadeIn 1s .7s both}
+.enter-wrap{animation:fadeIn 1s 1.5s both}
+.enter-box{display:inline-block;cursor:pointer;border:4px solid black;background:linear-gradient(120deg,#ff9ecd,#ffb878,#ffe066,#7ee0b5,#6fb7ff,#a47fff);padding-bottom:10px;transition:.1s ease-in-out;user-select:none}
+.enter-face{background:var(--rainbow);border:4px solid #fff;padding:6px 30px}
+.enter-face span{font-size:1.5em;letter-spacing:1px;font-family:"Fredoka",sans-serif}
+.enter-box:active{padding:0;margin-bottom:10px;transform:translateY(10px)}
+
+/* ===== Student card ===== */
+.card{width:min(100%,460px);background:var(--soft-rainbow);border:2px solid #264143;border-radius:20px;box-shadow:3px 4px 0 1px #E99F4C;overflow:hidden;transition:width .4s}
+.card.wide{width:min(100%,900px)}
+.banner{padding:24px 24px 0;text-align:center}
+.banner h1{font-size:1.6rem;font-weight:900;color:#264143}.banner p{margin-top:8px;font-weight:600;color:#264143}
+.body{padding:22px 24px 28px}
+.toolbar{display:flex;gap:8px;margin-bottom:10px}
+.mini{font:800 .9rem "Nunito",sans-serif;color:#264143;background:#DE5499;border:2px solid #264143;padding:8px 14px;border-radius:8px;cursor:pointer;box-shadow:2px 3px 0 0 #E99F4C}
+.mini.soft{background:#fff}
+.mini.on{outline:3px solid var(--ink)}
+.emoji-panel{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:2px;max-height:140px;overflow-y:auto;background:#fff;border-radius:4px;padding:8px;margin-bottom:16px;border:2px solid #264143;box-shadow:3px 4px 0 1px #E99F4C}
+.emoji-panel button{border:0;background:none;font-size:1.5rem;border-radius:10px;padding:4px;cursor:pointer}
+.emoji-panel button:hover{background:var(--pink)}
+.compose{display:grid;gap:16px}
+@media(min-width:760px){.card.wide .compose{grid-template-columns:1fr 1fr}}
+.write{display:flex;flex-direction:column;gap:10px}
+.write textarea{width:100%;min-height:120px;resize:vertical;border:2px solid #264143;border-radius:4px;padding:12px 10px;font:inherit;font-size:15px;color:#264143;background:#fff;outline:none;box-shadow:3px 4px 0 1px #E99F4C}
+.to{display:flex;align-items:center;gap:8px;background:#fff;border-radius:4px;padding:2px 10px;border:2px solid #264143;box-shadow:3px 4px 0 1px #E99F4C;font-weight:800;color:#264143}
+.to input{flex:1;border:0;outline:0;font:inherit;font-weight:600;color:var(--ink);padding:8px 0;background:none;min-width:0}
+.emojis button:hover{background:var(--pink)}
+.mini{font:700 .85rem "Nunito",sans-serif;color:var(--ink);background:var(--lavender);padding:8px 12px;border-radius:999px}
+textarea{width:100%;min-height:120px;resize:vertical;border:3px solid transparent;border-radius:20px;padding:14px;font:inherit;color:var(--ink);
+background:linear-gradient(#fff,#fff) padding-box,var(--rainbow) border-box}
+textarea:focus,.to:focus-within{transform:translateY(4px);box-shadow:1px 2px 0 0 #E99F4C}
+.draw{background:#fff;border-radius:8px;padding:12px;border:2px solid #264143;box-shadow:3px 4px 0 1px #E99F4C;display:flex;flex-direction:column;gap:10px}
+.draw-note{font-size:.8rem;font-weight:700;color:#c0446f;text-align:center}
+.trow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tool{border:2px solid #264143;background:#fff;border-radius:6px;padding:5px 9px;font:800 .8rem "Nunito",sans-serif;color:#264143;cursor:pointer;box-shadow:2px 2px 0 #E99F4C}
+.tool.on{background:#E99F4C;outline:0}
+.size{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.85rem}
+.size input{flex:1;accent-color:#e8588a}
+input[type=color]{width:30px;height:30px;border:0;padding:0;background:none;cursor:pointer}
+canvas{display:block;width:100%;aspect-ratio:8/5;touch-action:none;background:#fff;border:2px solid #264143;border-radius:4px;cursor:crosshair}
+.sw{width:26px;height:26px;border-radius:50%;border:3px solid #fff;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.sw.on{outline:3px solid var(--ink)}
+.meta{display:flex;justify-content:space-between;margin-top:8px;font-size:.85rem;color:var(--soft)}
+.err{color:#c0446f;font-weight:700}
+.send-row{display:flex;justify-content:center;margin:22px 0 6px}
+.note{text-align:center;font-size:.82rem;color:var(--soft);margin-top:10px}
+
+/* Submit button (user's design) */
+.submit-btn{width:200px;padding:0 0 3px;border:none;transform:rotate(5deg);transform-origin:center;font-family:"Gochi Hand",cursive;font-size:15px;cursor:pointer;
+border-radius:5px;box-shadow:0 2px 0 #494a4b;transition:all .3s cubic-bezier(.175,.885,.32,1.275);background:linear-gradient(120deg,#ff9ecd,#ffb878,#ffe066,#7ee0b5,#6fb7ff,#a47fff)}
+.submit-btn span{background:var(--rainbow);display:block;padding:.5rem 1rem;border-radius:5px;border:2px solid #494a4b;color:#2b2b2b}
+.submit-btn:active{transform:translateY(5px);padding-bottom:0;outline:0}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ===== Overlays ===== */
+.overlay{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:20px;background:rgba(205,180,255,.45);backdrop-filter:blur(6px)}
+.box{width:min(100%,380px);text-align:center;background:var(--soft-rainbow);border:2px solid #264143;border-radius:20px;padding:30px 26px;box-shadow:3px 4px 0 1px #E99F4C}
+.box p{margin:8px 0 20px;color:#264143;font-weight:600}
+.check{width:70px;height:70px;margin:0 auto 14px;border-radius:50%;background:var(--mint);border:2px solid #264143;box-shadow:2px 3px 0 #E99F4C;display:grid;place-items:center;font-size:2rem;color:#264143}
+.btn{font:600 1.05rem "Fredoka",sans-serif;color:var(--ink);border:0;border-radius:999px;padding:12px 24px;cursor:pointer;background:var(--rainbow);box-shadow:0 8px 18px -6px rgba(150,120,200,.55)}
+.btn.ghost{background:#fff;padding:10px 18px;box-shadow:0 4px 12px -4px rgba(150,120,200,.4)}
+input[type=password]{width:100%;padding:12px 10px;font:inherit;font-size:15px;border-radius:4px;color:#264143;border:2px solid #264143;background:#fff;outline:none;box-shadow:3px 4px 0 1px #E99F4C}
+input[type=password]:focus{transform:translateY(4px);box-shadow:1px 2px 0 0 #E99F4C}
+.row{display:flex;gap:10px;margin-top:14px}.row .btn{flex:1}
+.form-err{margin-top:10px;color:#c0446f;font-weight:700;font-size:.9rem;min-height:1.2em}
+
+/* ===== Admin ===== */
+.dash{width:min(100%,900px);align-self:start}
+.dash-head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:var(--rainbow);border-radius:var(--r);padding:20px 24px;box-shadow:var(--shadow)}
+.dash-head h2{font-size:1.7rem}.dash-head small{display:block;font-weight:700;color:#5d5278;margin-top:4px}
+.acts{display:flex;gap:10px}
+.list{display:grid;gap:14px;margin-top:20px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));align-items:start}
+.msg{background:#fff;border-radius:22px;overflow:hidden;box-shadow:var(--shadow);transition:.3s;transform:rotate(var(--tilt,0deg))}
+.list>.msg:nth-child(odd){--tilt:-1.2deg}.list>.msg:nth-child(even){--tilt:1deg}
+.msg.gone{opacity:0;transform:scale(.9)}
+.msg-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px;background:var(--hd)}
+.msg-title{font-family:"Fredoka",sans-serif;font-weight:700;font-size:1.05rem;color:#3b2f57;overflow-wrap:anywhere}
+.msg-head time{display:block;font-size:.75rem;font-weight:700;color:#3b2f57;opacity:.8;margin-top:2px}
+.del{border:0;background:rgba(255,255,255,.7);border-radius:50%;width:34px;height:34px;cursor:pointer;flex:none}.del:hover{background:#fff}
+.msg-body{padding:20px 18px;text-align:center}
+.msg-body p{font-weight:800;font-size:1.15rem;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
+.reveal{overflow:hidden;border-radius:14px;margin-top:14px}
+.reveal img{width:100%;display:block;transition:filter .3s}
+.blur{filter:blur(22px)}
+.tgl-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;font-weight:700;font-size:.85rem;color:var(--soft)}
+
+
+
+
+
+
+
+
+
+
+
+.empty{grid-column:1/-1;text-align:center;padding:40px 10px;color:var(--ink);font-weight:700}
+.corner{position:fixed;bottom:16px;z-index:10;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.75);font-size:1.1rem;cursor:pointer;opacity:.6;box-shadow:0 4px 12px -4px rgba(150,120,200,.5)}
+.corner:hover{opacity:1}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.mini:active,.tool:active{transform:translateY(3px);box-shadow:none}
+.box h2{color:#264143;font-weight:900}
+.overlay .btn{background:var(--rainbow);color:#264143;font-weight:700;border:2px solid #264143;border-radius:10px;box-shadow:3px 3px 0 0 #E99F4C}
+.overlay .btn.ghost{background:#fff}
+.overlay .btn:active{transform:translateY(3px);box-shadow:none}
+
+.mini.tog{background:#fff}
+.mini.tog.on{background:#E99F4C;transform:translateY(3px);box-shadow:none;outline:0}
+.mini.tog.on::after{content:" ✓"}
+.checkbox-wrapper-5 .tgl{--size:30px;position:relative;background:linear-gradient(90deg,#f19af3,#f099b5);line-height:0;perspective:400px;font-size:var(--size)}
+.checkbox-wrapper-5 .tgl input[type="checkbox"],.checkbox-wrapper-5 .tgl label,.checkbox-wrapper-5 .tgl label::before,.checkbox-wrapper-5 .tgl label::after,.checkbox-wrapper-5 .tgl{appearance:none;display:inline-block;border-radius:var(--size);border:0;transition:.35s ease-in-out;box-sizing:border-box;cursor:pointer}
+.checkbox-wrapper-5 .tgl label{width:calc(2.2*var(--size));height:var(--size);background:#d7d7d7;overflow:hidden}
+.checkbox-wrapper-5 .tgl input[type="checkbox"]{position:absolute;z-index:1;width:calc(.8*var(--size));height:calc(.8*var(--size));top:calc(.1*var(--size));left:calc(.1*var(--size));background:linear-gradient(45deg,#dedede,#fff);box-shadow:0 6px 7px rgba(0,0,0,.3);outline:none;margin:0}
+.checkbox-wrapper-5 .tgl input[type="checkbox"]:checked{left:calc(1.3*var(--size))}
+.checkbox-wrapper-5 .tgl input[type="checkbox"]:checked+label{background:transparent}
+.checkbox-wrapper-5 .tgl label::before,.checkbox-wrapper-5 .tgl label::after{content:"· ·";position:absolute;overflow:hidden;left:calc(.15*var(--size));top:calc(.5*var(--size));height:var(--size);letter-spacing:calc(-.04*var(--size));color:#9b9b9b;font-family:"Times New Roman",serif;z-index:2;font-size:calc(.6*var(--size));border-radius:0;transform-origin:0 0 calc(-.5*var(--size));backface-visibility:hidden}
+.checkbox-wrapper-5 .tgl label::after{content:"●";top:calc(.65*var(--size));left:calc(.2*var(--size));height:calc(.1*var(--size));width:calc(.35*var(--size));font-size:calc(.2*var(--size));transform-origin:0 0 calc(-.4*var(--size))}
+.checkbox-wrapper-5 .tgl input[type="checkbox"]:checked+label::before,.checkbox-wrapper-5 .tgl input[type="checkbox"]:checked+label::after{left:calc(1.55*var(--size));top:calc(.4*var(--size));line-height:calc(.1*var(--size));transform:rotateY(360deg)}
+.checkbox-wrapper-5 .tgl input[type="checkbox"]:checked+label::after{height:calc(.16*var(--size));top:calc(.55*var(--size));left:calc(1.6*var(--size));font-size:calc(.6*var(--size));line-height:0}
+.acts{align-items:flex-start;gap:14px}
+.enter-box.small .enter-face{padding:3px 14px}
+.enter-box.small .enter-face span{font-size:1rem}
+.toolbar{flex-wrap:wrap}
+.mini.tog.has::after{content:" ✓"}
+.song-panel{background:#fff;border:2px solid #264143;border-radius:4px;box-shadow:3px 4px 0 1px #E99F4C;padding:10px;margin-bottom:16px}
+.song-panel input{width:100%;border:0;outline:0;font:inherit;font-size:15px;color:#264143;background:none}
+.song-msg{font-size:.8rem;font-weight:700;margin-top:6px;color:#2eaf7d;min-height:1em}
+.song-msg.bad{color:#c0446f}
+.song{margin-top:14px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.song-btn{font:800 .9rem "Nunito",sans-serif;color:#264143;border:2px solid #264143;border-radius:10px;background:var(--rainbow);padding:8px 16px;box-shadow:2px 3px 0 #E99F4C;cursor:pointer}
+.song-btn:active{transform:translateY(3px);box-shadow:none}
+.song iframe{width:100%;border:0;border-radius:12px}
+.song iframe.spotify{height:152px}
+.song iframe.youtube{aspect-ratio:16/9;height:auto}
+.song a{font-size:.8rem;font-weight:700;color:var(--soft)}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:30;width:min(100%,400px);display:flex;flex-direction:column;gap:12px;padding:18px;background:var(--soft-rainbow);border-left:2px solid #264143;box-shadow:-4px 0 0 0 #E99F4C;transition:transform .35s ease,visibility .35s}
+.drawer.closed{transform:translateX(110%);visibility:hidden}
+.drawer-head{display:flex;justify-content:space-between;align-items:center}
+.drawer-head h2{font-size:1.4rem;color:#264143;font-weight:900}
+.search{display:flex;gap:8px}
+.search input{flex:1;min-width:0;border:2px solid #264143;border-radius:4px;padding:10px;font:inherit;font-size:15px;box-shadow:2px 3px 0 #E99F4C;background:#fff;color:#264143;outline:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:2px solid #264143;background:#fff;border-radius:999px;padding:3px 10px;font:700 .8rem "Nunito",sans-serif;cursor:pointer;color:#264143}
+.chip:hover{background:var(--yellow)}
+.picked{background:#fff;border:2px solid #264143;border-radius:8px;padding:8px 10px;font-weight:800;font-size:.85rem;display:flex;justify-content:space-between;gap:8px;align-items:center;color:#264143}
+.results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:2px 4px 6px 2px}
+.srow{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #264143;border-radius:10px;padding:6px 8px}
+.srow img,.noart{width:46px;height:46px;border-radius:8px;flex:none;background:var(--pink)}
+.sinfo{flex:1;min-width:0}
+.stitle,.sartist{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stitle{font-weight:800;font-size:.9rem;color:#264143}.sartist{font-size:.78rem;color:var(--soft);font-weight:700}
+.sbtn{border:2px solid #264143;border-radius:8px;background:#fff;font:800 .8rem "Nunito",sans-serif;padding:6px 9px;cursor:pointer;color:#264143;box-shadow:2px 2px 0 #E99F4C;flex:none}
+.sbtn.add{background:var(--rainbow)}.sbtn:active{transform:translateY(2px);box-shadow:none}
+.song-empty{text-align:center;font-weight:700;color:#264143;padding:20px 8px}
+.paste summary{cursor:pointer;font-weight:800;font-size:.85rem;color:#264143}
+.paste input{width:100%;margin-top:8px;border:2px solid #264143;border-radius:4px;padding:9px;font:inherit;font-size:14px;background:#fff;color:#264143;outline:none}
+.song-card{display:flex;align-items:center;gap:10px;margin-top:14px;text-align:left;background:var(--soft-rainbow);border:2px solid #264143;border-radius:12px;padding:8px;box-shadow:2px 3px 0 #E99F4C}
+.song-card img{width:56px;height:56px;border-radius:10px;flex:none}
+.song-card .mid{flex:1;min-width:0}
+.song-card .stt{font-weight:800;font-size:.85rem;margin-bottom:4px;overflow-wrap:anywhere;color:#264143}
+.song-card audio{width:100%;height:32px}
+.style-panel{background:#fff;border:2px solid #264143;border-radius:4px;box-shadow:3px 4px 0 1px #E99F4C;padding:10px 12px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px}
+.srow2{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.style-panel b{min-width:92px;font-size:.85rem;color:#264143}
+.swrow{display:flex;gap:6px;flex-wrap:wrap}
+.stl{width:28px;height:28px;border-radius:50%;border:2px solid #264143;cursor:pointer;padding:0;background:#fff;font:800 .8rem "Nunito",sans-serif;color:#264143}
+.stl.pill{width:auto;border-radius:999px;padding:2px 12px}
+.stl.on{outline:3px solid #E99F4C;outline-offset:1px}
+.photo-prev{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #264143;border-radius:8px;padding:6px;box-shadow:2px 3px 0 #E99F4C}
+.photo-prev img{width:64px;height:64px;object-fit:cover;border-radius:6px}
+.photo-prev span{flex:1;font-weight:800;font-size:.85rem;color:#264143}
+.media-row{display:flex;gap:10px;align-items:flex-start;margin-top:14px}
+.media-row>div{flex:1 1 0;min-width:0}
+.media-row .reveal{margin-top:0}
+.media-row .tgl-row{flex-wrap:wrap;gap:6px;margin-top:8px}
+html{font-size:18px}
+.ic{width:1.25em;height:1.25em;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.22em}
+.card{width:min(100%,680px)}
+.card.wide{width:min(100%,1060px)}
+.banner{padding:30px 34px 0}
+.banner h1{font-size:2.1rem}
+.banner p{font-size:1.05rem}
+.body{padding:26px 34px 38px}
+textarea{font-size:17px;padding:14px 12px}
+.write textarea{min-height:220px}
+.to{padding:5px 14px}
+.mini{display:inline-flex;align-items:center;gap:8px;font-size:.95rem;padding:11px 18px;border-radius:10px}
+.toolbar{margin:18px 0 14px;gap:10px}
+.emoji-panel{grid-template-columns:repeat(auto-fill,minmax(50px,1fr));max-height:210px;margin:0 0 16px}
+.emoji-panel button{font-size:1.7rem}
+.style-panel,.draw-note{margin-bottom:16px}
+.draw-note{display:flex;gap:6px;align-items:center;justify-content:center;margin-bottom:0}
+.submit-btn{width:270px;font-size:19px}
+.submit-btn span{padding:.7rem 1rem}
+.send-row{margin:26px 0 8px}
+.box{width:min(100%,460px);padding:34px 30px}
+.check{color:#264143}
+.check .ic{width:38px;height:38px}
+.drawer{width:min(100%,470px)}
+.drawer-head h2{display:flex;align-items:center;gap:8px}
+.sbtn{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.sbtn .ic{width:16px;height:16px}
+.song-btn{display:inline-flex;align-items:center;gap:8px}
+.corner{width:52px;height:52px;display:grid;place-items:center;color:#264143}
+.corner .ic{width:24px;height:24px}
+.del{display:grid;place-items:center;padding:0;color:#3b2f57}
+.del .ic{width:18px;height:18px}
+.dash{width:min(100%,1180px)}
+.dh-left{display:flex;align-items:center;gap:14px}
+.brand-sm{display:block;width:64px;height:64px;border-radius:50%;margin:0 auto 10px;box-shadow:0 4px 12px -4px rgba(38,65,67,.45)}
+.dash-head .brand-sm{margin:0;width:56px;height:56px}
+.brand-lg{width:min(52vw,210px);height:auto;border-radius:50%;box-shadow:var(--shadow);animation:logoIn 1s both}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol><symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol><symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/><path d="M19 3v4M17 5h4"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol><symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></symbol><symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="m22 9-6 6M16 9l6 6"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8Z" fill="currentColor" stroke="none"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 4h4v16H7zM13 4h4v16h-4z" fill="currentColor" stroke="none"/></symbol><symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></symbol><symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8Z"/></symbol><symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></symbol></svg>
+<div class="aura-bg">
+  <div class="layer l1" aria-hidden="true"></div><div class="layer l2" aria-hidden="true"></div>
+  <div class="layer l3" aria-hidden="true"></div><div class="layer l4" aria-hidden="true"></div>
+
+  <!-- Content sits ABOVE the aura layers (.app has z-index:1) -->
+  <div class="app">
+
+    <!-- INTRO: logo fades in, then Enter button -->
+    <section id="intro" class="view intro">
+      <img data-logo class="brand-lg" alt="Abacus Club STI Fairview">
+      <div class="logo">Spill the beans!</div>
+      <p class="tag">Got something to say? Nobody will know it was you.</p>
+      <div class="enter-wrap"><div class="enter-box" id="enter" role="button" tabindex="0"><div class="enter-face"><span>Hell yeah!</span></div></div></div>
+    </section>
+
+    <!-- STUDENT VIEW -->
+    <main id="student" class="view card hidden">
+      <div class="banner"><img data-logo class="brand-sm" alt="Abacus Club STI Fairview"><h1>Send Anonymous Message</h1><p>Say anything to your teachers or classmates. Nobody will know it was you.</p></div>
+      <div class="body">
+        <div class="compose">
+          <div class="write">
+            <label class="to">To: <input id="to" maxlength="60" placeholder="Teacher or classmate (optional)" autocomplete="off"></label>
+            <textarea id="message" maxlength="500" aria-label="Your message" placeholder="Type your anonymous message here..."></textarea>
+            <div id="photo-prev" class="photo-prev hidden"></div>
+          </div>
+          <!-- Opens to the RIGHT of the message box on desktop, below it on phones -->
+          <div id="draw-panel" class="draw hidden">
+            <p class="draw-note"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>Inappropriate drawings will be deleted. Please keep it respectful.</p>
+            <div class="trow" id="tools"></div>
+            <canvas id="pad" width="480" height="300"></canvas>
+            <label class="size">Size <input type="range" id="size" min="1" max="24" value="5"><span id="size-val">5</span></label>
+            <div class="trow"><span class="trow" id="swatches"></span><input type="color" id="custom" value="#4a4063" aria-label="Custom color"></div>
+            <div class="trow"><button type="button" class="mini" id="undo"><svg class="ic" aria-hidden="true"><use href="#i-undo"/></svg>Undo</button><button type="button" class="mini" id="clear-draw">Clear</button></div>
+          </div>
+        </div>
+        <div class="toolbar"><button type="button" class="mini tog" id="emoji-toggle"><svg class="ic" aria-hidden="true"><use href="#i-smile"/></svg>Emoji</button><button type="button" class="mini tog" id="draw-toggle"><svg class="ic" aria-hidden="true"><use href="#i-pencil"/></svg>Draw</button><button type="button" class="mini tog" id="song-toggle"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg>Add music</button><button type="button" class="mini tog" id="photo-toggle"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg>Add picture</button><button type="button" class="mini tog" id="style-toggle"><svg class="ic" aria-hidden="true"><use href="#i-sparkles"/></svg>Style</button></div>
+        <div id="emoji-panel" class="emoji-panel hidden" aria-label="Emoji picker"></div>
+        <div id="style-panel" class="style-panel hidden">
+          <div class="srow2"><b>Background</b><span class="swrow" id="bg-sw"></span></div>
+          <div class="srow2"><b>Text color</b><span class="swrow" id="fg-sw"></span></div>
+          <div class="srow2"><b>Font</b><span class="swrow" id="font-sw"></span></div>
+        </div>
+        <div class="meta"><span id="status" class="err" role="alert"></span><span><span id="counter">0</span>/500</span></div>
+        <div class="send-row"><button class="submit-btn" id="send-btn" disabled><span>Send Anonymously</span></button></div>
+      
+      </div>
+    </main>
+
+    <!-- ADMIN DASHBOARD -->
+    <section id="admin" class="view dash hidden">
+      <div class="dash-head">
+        <div class="dh-left"><img data-logo class="brand-sm" alt="Abacus Club STI Fairview"><div><h2>Feedback inbox</h2><small id="count"></small></div></div>
+        <div class="acts"><div class="enter-box small" id="refresh" role="button" tabindex="0"><div class="enter-face"><span>Refresh messages</span></div></div><div class="enter-box small" id="logout" role="button" tabindex="0"><div class="enter-face"><span>Log out</span></div></div></div>
+      </div>
+      <div id="list" class="list"></div>
+    </section>
+  </div>
+</div>
+
+<!-- Success overlay -->
+<div id="success" class="overlay hidden" role="dialog" aria-modal="true">
+  <div class="box"><div class="check"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></div><h2>Message sent!</h2><p>Your feedback was delivered anonymously.</p><button class="btn" id="again">Send another message</button></div>
+</div>
+<!-- Inappropriate drawing warning -->
+<div id="warn" class="overlay hidden" role="alertdialog" aria-modal="true">
+  <div class="box"><div class="check" style="background:var(--pink)"><svg class="ic" aria-hidden="true"><use href="#i-ban"/></svg></div><h2>Inappropriate drawing</h2>
+    <p>Inappropriate drawings aren't allowed here, so we cleared it. Please draw something respectful.</p>
+    <button class="btn" id="warn-ok">OK</button></div>
+</div>
+<input type="file" id="photo-file" accept="image/*" hidden>
+<!-- Be-respectful alert (shown before choosing a picture) -->
+<div id="respect" class="overlay hidden" role="alertdialog" aria-modal="true">
+  <div class="box"><div class="check" style="background:var(--yellow)"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg></div><h2>Be respectful</h2>
+    <p>Please don't send inappropriate, mean, or private pictures. They will be deleted.</p>
+    <div class="row"><button class="btn ghost" id="respect-cancel">Cancel</button><button class="btn" id="respect-ok">I understand</button></div></div>
+</div>
+<!-- Admin login -->
+<div id="login" class="overlay hidden" role="dialog" aria-modal="true">
+  <div class="box"><h2 style="margin-bottom:14px">Admin access</h2>
+    <input type="password" id="pass" placeholder="Admin password" autocomplete="current-password">
+    <div id="login-err" class="form-err" role="alert"></div>
+    <div class="row"><button class="btn ghost" id="login-cancel">Cancel</button><button class="btn" id="login-ok">Unlock</button></div>
+  </div>
+</div>
+
+<button id="admin-toggle" class="corner hidden" style="right:16px" aria-label="Admin login"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></button>
+<button id="music-toggle" class="corner hidden" style="left:16px" aria-label="Toggle music"><svg class="ic" aria-hidden="true"><use href="#i-volume"/></svg></button>
+
+<!-- Right-side music drawer: search songs (Apple iTunes Search, free, 30-sec previews) -->
+<aside id="music-drawer" class="drawer closed" aria-label="Add music">
+  <div class="drawer-head"><h2><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> Add music</h2><button type="button" id="drawer-close" class="sbtn" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <form id="song-form" class="search"><input id="song-q" type="search" placeholder="Search a song or artist..." autocomplete="off" aria-label="Search songs"><button class="mini">Search</button></form>
+  <div id="song-chips" class="chips"></div>
+  <div id="song-picked" class="picked hidden"></div>
+  <div id="song-results" class="results"></div>
+  <details class="paste"><summary>Or paste a Spotify / YouTube link</summary>
+    <input id="song-url" type="url" placeholder="https://open.spotify.com/track/..." autocomplete="off" maxlength="200" aria-label="Music link">
+    <div id="song-msg" class="song-msg"></div>
+  </details>
+</aside>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+"use strict";
+/* ============ 1. CONFIG ============ */
+const SUPABASE_URL = "https://xzicsfnqleqhoytsjbqi.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6aWNzZm5xbGVxaG95dHNqYnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwOTAxMzcsImV4cCI6MjEwNjY2NjEzN30.U_CDPentilZWMN6CLW2xEvaCrCmEpgVcc-7j_BpSxLc";
+const ADMIN_EMAIL = "cidkazue@gmail.com";   // password is typed in the login box (checked by Supabase Auth)
+const BGM_SRC = "";                              // <-- put your music file here, e.g. "music.mp3" (same folder as this file)
+// Set to true AFTER you deploy the "moderate-drawing" Supabase Edge Function (see moderate-drawing.ts).
+// When true, every drawing is checked by AI before sending; inappropriate ones are cleared and a warning pops up.
+const MODERATE_DRAWINGS = false;
+const TABLE = "anonymous_feedbacks", MAX_LEN = 500;
+const EMOJIS = "😀 😃 😄 😁 😆 😅 😂 🤣 🥹 😊 😇 🙂 😉 😍 🥰 😘 😋 😛 😜 🤪 😎 🤓 🥳 🤩 😏 😒 🙄 😔 😞 😢 😭 😤 😡 🤬 😱 😨 😰 😳 🥺 😴 🤔 🤭 🤫 🙃 😬 🤗 🫡 👍 👎 👏 🙌 🙏 💪 👋 🤝 ✌️ 🤞 ❤️ 🧡 💛 💚 💙 💜 🩷 💔 💖 💕 ✨ 🔥 ⭐ 🌈 🌸 🌻 🎉 🎊 🎁 💯 ✅ ❌ ❓ 💡 📚 ✏️ 🏆 🎵 🍕 🍔 🍟 🍩 🍦 ☕ 🐶 🐱 🐻 🦄".split(" ");
+const COLORS = ["#4a4063","#000000","#e8588a","#ff6b6b","#f5a623","#ffd93d","#2eaf7d","#4a90e2","#9b6bff","#ff9ecd","#8ad4ff","#8b5e3c"];
+const CARD_COLORS = ["linear-gradient(120deg,#ffc8dd,#ff9ecd)","linear-gradient(120deg,#ffd6b0,#ffb878)","linear-gradient(120deg,#fff2b2,#ffe066)","linear-gradient(120deg,#b8f2d6,#7ee0b5)","linear-gradient(120deg,#a9d6ff,#6fb7ff)","linear-gradient(120deg,#cdb4ff,#a47fff)"];
+
+/* ============ 2. SUPABASE CLIENT ============ */
+// One client with the public anon key. Students are the "anon" role; after the admin logs in,
+// the same client sends the admin's token and acts as "authenticated".
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const $ = id => document.getElementById(id);
+const ico = n => '<svg class="ic" aria-hidden="true"><use href="#i-' + n + '"/></svg>';   // SVG icons (see the sprite at the top of <body>)
+const LOGO = "data:image/webp;base64,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";   // Abacus Club logo, embedded so no extra file is needed
+document.querySelectorAll("img[data-logo]").forEach(i => { i.src = LOGO; });
+$("fav").href = LOGO;
+
+/* ============ 3. VIEW SWITCHING (fade out -> hide -> fade in) ============ */
+const views = { intro: $("intro"), student: $("student"), admin: $("admin") };
+const adminToggle = $("admin-toggle");
+let current = "intro";
+function switchTo(name) {
+  const from = views[current], to = views[name];
+  current = name;
+  from.classList.add("fade-out");
+  setTimeout(() => {
+    from.classList.add("hidden"); from.classList.remove("fade-out");
+    to.classList.remove("hidden", "fade-in"); void to.offsetWidth; to.classList.add("fade-in");
+    adminToggle.classList.toggle("hidden", name !== "student");   // lock icon only on student view
+  }, 500);
+}
+
+/* ============ 4. INTRO + MUSIC ============ */
+const bgm = new Audio(); bgm.loop = true; bgm.volume = 0.4;
+const musicBtn = $("music-toggle");
+if (BGM_SRC) { bgm.src = BGM_SRC; musicBtn.classList.remove("hidden"); }
+musicBtn.onclick = () => { if (bgm.paused) { bgm.play(); musicBtn.innerHTML = ico("volume"); } else { bgm.pause(); musicBtn.innerHTML = ico("mute"); } };
+
+let entered = false;
+function enter() {
+  if (entered) return; entered = true;
+  if (BGM_SRC) bgm.play().catch(() => { musicBtn.innerHTML = ico("mute"); });   // click = allowed to autoplay
+  switchTo("student");
+}
+$("enter").addEventListener("click", enter);
+$("enter").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); enter(); } });
+
+/* ============ 5. STUDENT: To, text, emoji, drawing ============ */
+const ta = $("message"), toIn = $("to"), sendBtn = $("send-btn"), statusEl = $("status"), studentCard = $("student");
+const emojiPanel = $("emoji-panel"), drawPanel = $("draw-panel");
+const pad = $("pad"), ctx = pad.getContext("2d"), W = pad.width, H = pad.height;
+let hasDrawing = false, trimmed = false, color = COLORS[0], tool = "pen", size = 5, drawing = false, pts = [], base = null, undoStack = [];
+
+// Drawing tools: alpha = transparency, mult = thickness multiplier, cap = stroke end shape
+const TOOLS = {
+  pen:    { label: "Pen",         cap: "round",  alpha: 1,   mult: 1 },
+  pencil: { label: "Pencil",      cap: "round",  alpha: .6,  mult: .6 },
+  marker: { label: "Marker",      cap: "square", alpha: .9,  mult: 2 },
+  glow:   { label: "Highlighter", cap: "square", alpha: .35, mult: 4 },
+  eraser: { label: "Eraser",      cap: "round",  alpha: 1,   mult: 2.5, erase: true }
+};
+
+const HINT = "Add a message to send your drawing.";
+const refreshSend = () => {
+  const hasText = !!ta.value.trim();
+  sendBtn.disabled = !hasText;                                   // a message is required (drawing is optional)
+  if (hasDrawing && !hasText) statusEl.textContent = HINT;
+  else if (statusEl.textContent === HINT) statusEl.textContent = "";
+};
+ta.addEventListener("input", () => { $("counter").textContent = ta.value.length; statusEl.textContent = ""; refreshSend(); });
+
+// Emoji picker (grid, shown by default; button hides/shows it)
+EMOJIS.forEach(em => {
+  const b = document.createElement("button"); b.type = "button"; b.textContent = em; b.setAttribute("aria-label", "Add " + em);
+  b.onclick = () => {
+    if (ta.value.length + em.length > MAX_LEN) return;
+    ta.setRangeText(em, ta.selectionStart, ta.selectionEnd, "end"); ta.focus(); ta.dispatchEvent(new Event("input"));
+  };
+  emojiPanel.append(b);
+});
+$("emoji-toggle").onclick = e => {
+  const open = emojiPanel.classList.toggle("hidden") === false;
+  e.currentTarget.classList.toggle("on", open);
+  if (open) { drawPanel.classList.add("hidden"); studentCard.classList.remove("wide"); $("draw-toggle").classList.remove("on"); closeDrawer(); closeAll("emoji"); }   // opening Emoji closes Draw + Music (your drawing is kept, just hidden)
+};
+// Draw button: opens the drawing panel beside the message box (card widens)
+$("draw-toggle").onclick = e => {
+  const open = drawPanel.classList.toggle("hidden") === false;
+  studentCard.classList.toggle("wide", open); e.currentTarget.classList.toggle("on", open);
+  if (open) { emojiPanel.classList.add("hidden"); $("emoji-toggle").classList.remove("on"); closeDrawer(); closeAll("draw"); }   // opening Draw closes Music and the emoji panel to save space
+};
+
+// Tool buttons, size slider, colours
+Object.entries(TOOLS).forEach(([k, t]) => {
+  const b = document.createElement("button"); b.type = "button"; b.className = "tool" + (k === tool ? " on" : ""); b.textContent = t.label;
+  b.onclick = () => { tool = k; document.querySelectorAll(".tool").forEach(x => x.classList.remove("on")); b.classList.add("on"); };
+  $("tools").append(b);
+});
+$("size").oninput = e => { size = +e.target.value; $("size-val").textContent = size; };
+const pickSwatch = s => { document.querySelectorAll(".sw").forEach(x => x.classList.remove("on")); if (s) s.classList.add("on"); };
+COLORS.forEach((c, i) => {
+  const s = document.createElement("span"); s.className = "sw" + (i ? "" : " on"); s.style.background = c;
+  s.onclick = () => { color = c; $("custom").value = c; pickSwatch(s); };
+  $("swatches").append(s);
+});
+$("custom").oninput = e => { color = e.target.value; pickSwatch(null); };   // any colour the user wants
+
+// Canvas. Each stroke is redrawn from a snapshot so see-through tools (pencil/highlighter) don't stack up dark blobs.
+function resetPad() { ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H); hasDrawing = false; trimmed = false; undoStack = []; refreshSend(); }
+resetPad();
+const pos = e => { const r = pad.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+function strokePath() {
+  const t = TOOLS[tool];
+  ctx.save(); ctx.globalAlpha = t.alpha; ctx.lineCap = t.cap; ctx.lineJoin = "round"; ctx.lineWidth = size * t.mult;
+  ctx.strokeStyle = t.erase ? "#fff" : color; ctx.beginPath();
+  pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+  if (pts.length === 1) ctx.lineTo(pts[0][0] + .01, pts[0][1]);
+  ctx.stroke(); ctx.restore();
+}
+pad.addEventListener("pointerdown", e => {
+  drawing = true; pad.setPointerCapture(e.pointerId);
+  base = ctx.getImageData(0, 0, W, H); undoStack.push(base);
+  if (undoStack.length > 40) { undoStack.shift(); trimmed = true; }
+  pts = [pos(e)]; strokePath(); hasDrawing = true; refreshSend();
+});
+pad.addEventListener("pointermove", e => { if (!drawing) return; pts.push(pos(e)); ctx.putImageData(base, 0, 0); strokePath(); });
+["pointerup", "pointercancel"].forEach(t => pad.addEventListener(t, () => { drawing = false; }));
+$("undo").onclick = () => { const s = undoStack.pop(); if (s) ctx.putImageData(s, 0, 0); hasDrawing = undoStack.length > 0 || trimmed; refreshSend(); };
+$("clear-draw").onclick = resetPad;
+
+// Asks the Edge Function (which asks Claude) whether the drawing is OK. Returns "ok" | "flagged" | "error".
+async function checkDrawing(dataUrl) {
+  try {
+    const { data, error } = await db.functions.invoke("moderate-drawing", { body: { image: dataUrl } });
+    if (error) {   // log the real reason from the server so it can be fixed
+      let detail = ""; try { detail = JSON.stringify(await error.context.json()); } catch (_) {}
+      console.error("Moderation check failed:", error.message, detail); return "error";
+    }
+    if (typeof data?.ok !== "boolean") { console.error("Moderation check failed, odd reply:", data); return "error"; }
+    return data.ok ? "ok" : "flagged";
+  } catch (e) { console.error("Moderation check failed:", e); return "error"; }
+}
+$("warn-ok").onclick = () => $("warn").classList.add("hidden");
+
+// ===== Add music: right-side drawer with song search (Apple iTunes Search API: free, no key, 30-second previews) =====
+const drawer = $("music-drawer"), songUrl = $("song-url"), songMsg = $("song-msg"), songToggle = $("song-toggle");
+const pv = new Audio(); let pvBtn = null;                       // one shared preview player
+let songInfo = null, picked = null, firstOpen = true;           // songInfo = pasted link, picked = song chosen from search
+
+function stopPreview() { pv.pause(); if (pvBtn) { pvBtn.innerHTML = ico("play"); pvBtn = null; } }
+function openDrawer() { emojiPanel.classList.add("hidden"); $("emoji-toggle").classList.remove("on"); drawPanel.classList.add("hidden"); studentCard.classList.remove("wide"); $("draw-toggle").classList.remove("on"); drawer.classList.remove("closed"); closeAll("music");   /* opening Music closes Emoji + Draw */ songToggle.classList.add("on"); if (firstOpen) { firstOpen = false; searchSongs("OPM"); } $("song-q").focus(); }
+function closeDrawer() { drawer.classList.add("closed"); songToggle.classList.remove("on"); stopPreview(); }
+songToggle.onclick = () => drawer.classList.contains("closed") ? openDrawer() : closeDrawer();
+$("drawer-close").onclick = closeDrawer;
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !drawer.classList.contains("closed")) closeDrawer(); });
+pv.addEventListener("ended", stopPreview);
+
+function resetAddButtons() { document.querySelectorAll(".sbtn.add").forEach(b => { b.textContent = "Add"; }); }
+function refreshMusicUI() {
+  songToggle.classList.toggle("has", !!(picked || songInfo));    // ✓ on the button when a song is attached
+  const box = $("song-picked"); box.classList.toggle("hidden", !picked); box.innerHTML = "";
+  if (picked) {
+    const t = document.createElement("span"); t.innerHTML = ico("check") + " "; t.append(document.createTextNode(picked.title));
+    const x = document.createElement("button"); x.type = "button"; x.className = "sbtn"; x.textContent = "Remove";
+    x.onclick = () => { picked = null; resetAddButtons(); refreshMusicUI(); };
+    box.append(t, x);
+  }
+}
+
+async function searchSongs(term) {
+  const box = $("song-results"); box.innerHTML = `<div class="song-empty">Searching...</div>`;
+  try {
+    // explicit=No hides explicit songs (school-friendly); country=PH shows songs available in the Philippines
+    const r = await fetch("https://itunes.apple.com/search?media=music&entity=song&limit=25&explicit=No&country=PH&term=" + encodeURIComponent(term));
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    renderSongs((await r.json()).results || []);
+  } catch (e) { console.error(e); box.innerHTML = `<div class="song-empty">Couldn't load songs. Check your internet and try again.</div>`; }
+}
+
+function renderSongs(items) {
+  const box = $("song-results"); box.innerHTML = "";
+  const ok = items.filter(t => t.previewUrl && PREVIEW_RE.test(t.previewUrl) && t.trackExplicitness !== "explicit");
+  if (!ok.length) { box.innerHTML = `<div class="song-empty">No songs found. Try another search.</div>`; return; }
+  ok.forEach(t => {
+    const row = document.createElement("div"); row.className = "srow";
+    const art = t.artworkUrl100 && PREVIEW_RE.test(t.artworkUrl100) ? t.artworkUrl100 : "";
+    if (art) { const im = document.createElement("img"); im.src = art; im.alt = ""; im.loading = "lazy"; row.append(im); }
+    else { const n = document.createElement("div"); n.className = "noart"; row.append(n); }
+    const info = document.createElement("div"); info.className = "sinfo";
+    const a = document.createElement("div"); a.className = "stitle"; a.textContent = t.trackName || "Unknown song";
+    const b = document.createElement("div"); b.className = "sartist"; b.textContent = t.artistName || "";
+    info.append(a, b);
+    const play = document.createElement("button"); play.type = "button"; play.className = "sbtn"; play.innerHTML = ico("play"); play.setAttribute("aria-label", "Preview");
+    play.onclick = () => {
+      if (pvBtn === play) { stopPreview(); return; }
+      stopPreview(); pv.src = t.previewUrl; pv.play().catch(() => {}); play.innerHTML = ico("pause"); pvBtn = play;
+    };
+    const add = document.createElement("button"); add.type = "button"; add.className = "sbtn add";
+    add.textContent = picked && picked.preview === t.previewUrl ? "✓ Added" : "Add";
+    add.onclick = () => {
+      picked = { title: ((t.trackName || "Song") + (t.artistName ? " — " + t.artistName : "")).slice(0, 120), preview: t.previewUrl, art };
+      songUrl.value = ""; songInfo = null; songMsg.textContent = "";            // one song per message
+      resetAddButtons(); add.textContent = "✓ Added"; refreshMusicUI();
+    };
+    row.append(info, play, add); box.append(row);
+  });
+}
+
+$("song-form").addEventListener("submit", e => { e.preventDefault(); searchSongs($("song-q").value.trim() || "OPM"); });
+["OPM", "Pop", "Hip-hop", "K-pop", "Acoustic", "Lo-fi", "Rock", "R&B"].forEach(c => {
+  const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = c;
+  b.onclick = () => { $("song-q").value = c; searchSongs(c); };
+  $("song-chips").append(b);
+});
+
+// Optional: paste a Spotify / YouTube link instead
+songUrl.addEventListener("input", () => {
+  const v = songUrl.value.trim();
+  songInfo = v ? parseSong(v) : null;
+  if (songInfo) { picked = null; resetAddButtons(); }
+  songMsg.textContent = !v ? "" : songInfo ? "✓ " + (songInfo.kind === "spotify" ? "Spotify" : "YouTube") + " song added" : "That doesn't look like a Spotify or YouTube link";
+  songMsg.className = "song-msg" + (v && !songInfo ? " bad" : "");
+  refreshMusicUI();
+  if (statusEl.textContent === "Fix or clear the music link first.") statusEl.textContent = "";
+});
+function resetSong() { songUrl.value = ""; songInfo = null; picked = null; songMsg.textContent = ""; resetAddButtons(); refreshMusicUI(); closeDrawer(); }
+
+sendBtn.addEventListener("click", async () => {
+  // Sends only: message, optional "To", optional drawing. created_at comes from the DB default. No IDs/IPs.
+  if (!ta.value.trim()) { statusEl.textContent = HINT; return; }
+  if (songUrl.value.trim() && !songInfo) { statusEl.textContent = "Fix or clear the music link first."; return; }
+  const payload = { content: ta.value.trim() };
+  if (songInfo) payload.music = songInfo.canonical;
+  if (picked) { payload.song_title = picked.title; payload.song_preview = picked.preview; if (picked.art) payload.song_art = picked.art; }
+  if (photoData) payload.photo = photoData;
+  if (sty.bg !== "none") payload.style_bg = sty.bg;
+  if (sty.fg !== "plum") payload.style_fg = sty.fg;
+  if (sty.font !== "nunito") payload.style_font = sty.font;
+  const to = toIn.value.trim(); if (to) payload.recipient = to;
+  if (hasDrawing) payload.drawing = pad.toDataURL("image/jpeg", 0.7);
+  sendBtn.disabled = true;
+  if (hasDrawing && MODERATE_DRAWINGS) {
+    statusEl.textContent = "Checking your drawing...";
+    const verdict = await checkDrawing(payload.drawing);
+    statusEl.textContent = "";
+    if (verdict === "flagged") { resetPad(); $("warn").classList.remove("hidden"); return; }   // clear the drawing box + popup
+    if (verdict === "error") { statusEl.textContent = "Couldn't check your drawing. Try again, or clear it and send text only."; refreshSend(); return; }
+  }
+  const { error } = await db.from(TABLE).insert(payload);   // no .select(): anon can't read
+  if (error) { console.error(error); statusEl.textContent = "Couldn't send. Check your connection and try again."; refreshSend(); return; }
+  ta.value = ""; toIn.value = ""; $("counter").textContent = "0"; resetPad(); resetSong(); resetExtras();
+  drawPanel.classList.add("hidden"); studentCard.classList.remove("wide"); $("draw-toggle").classList.remove("on");
+  $("success").classList.remove("hidden");
+});
+$("again").onclick = () => { $("success").classList.add("hidden"); ta.focus(); };
+
+/* ============ MUSIC LINKS ============
+   Only Spotify and YouTube links are accepted. We pull out the song ID and rebuild a clean link ourselves,
+   so nothing else can be stored or embedded. */
+function parseSong(raw) {
+  let u; try { u = new URL(String(raw).trim()); } catch (_) { return null; }
+  if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+  const host = u.hostname.replace(/^(www\.|m\.|music\.)/, "");
+  const seg = u.pathname.split("/").filter(Boolean);
+  if (host === "youtu.be" || host === "youtube.com") {
+    const id = host === "youtu.be" ? seg[0] : (u.searchParams.get("v") || (["shorts", "embed", "live"].includes(seg[0]) ? seg[1] : ""));
+    if (!/^[A-Za-z0-9_-]{11}$/.test(id || "")) return null;
+    return { kind: "youtube", canonical: "https://www.youtube.com/watch?v=" + id, embed: "https://www.youtube.com/embed/" + id };
+  }
+  if (host === "open.spotify.com") {
+    const i = seg.findIndex(x => ["track", "album", "playlist", "episode"].includes(x));
+    const id = i >= 0 ? seg[i + 1] : "";
+    if (!/^[A-Za-z0-9]{22}$/.test(id || "")) return null;
+    return { kind: "spotify", canonical: "https://open.spotify.com/" + seg[i] + "/" + id, embed: "https://open.spotify.com/embed/" + seg[i] + "/" + id };
+  }
+  return null;
+}
+
+// Admin side: the player only loads when "Play song" is clicked (keeps the inbox fast)
+function songBlock(info) {
+  const box = document.createElement("div"); box.className = "song";
+  const play = document.createElement("button"); play.className = "song-btn";
+  play.innerHTML = ico("play") + " Play song (" + (info.kind === "spotify" ? "Spotify" : "YouTube") + ")";
+  play.onclick = () => {
+    const f = document.createElement("iframe"); f.src = info.embed; f.loading = "lazy"; f.className = info.kind;
+    f.allow = "autoplay; encrypted-media; clipboard-write; fullscreen"; f.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+    play.replaceWith(f);
+  };
+  const a = document.createElement("a"); a.href = info.canonical; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = "Open in new tab";
+  box.append(play, a); return box;
+}
+
+// Only Apple preview/artwork hosts are accepted (same rule is enforced in the database)
+const PREVIEW_RE = /^https:\/\/[a-z0-9.-]+\.(?:itunes\.apple\.com|mzstatic\.com)\/[A-Za-z0-9\/._~%+-]+$/;
+function previewBlock(row) {                      // admin: cover + title + 30-second player (loads only when pressed play)
+  const box = document.createElement("div"); box.className = "song-card";
+  if (row.song_art && PREVIEW_RE.test(row.song_art)) { const im = document.createElement("img"); im.src = row.song_art; im.alt = ""; box.append(im); }
+  const mid = document.createElement("div"); mid.className = "mid";
+  const t = document.createElement("div"); t.className = "stt"; t.innerHTML = ico("music") + " "; t.append(document.createTextNode(row.song_title || "Song"));
+  const au = document.createElement("audio"); au.controls = true; au.preload = "none"; au.src = row.song_preview;
+  mid.append(t, au); box.append(mid); return box;
+}
+
+/* ============ STYLE (soft pastel backgrounds / text) + PICTURE ============
+   Style choices are saved as short IDs (not CSS), and the database only accepts these exact IDs. */
+const BGS = {
+  none: "#ffffff",
+  pink: "linear-gradient(135deg,#ffe3ee,#ffc8dd)", peach: "linear-gradient(135deg,#fff0e0,#ffd6b0)",
+  yellow: "linear-gradient(135deg,#fffbe0,#fff2b2)", mint: "linear-gradient(135deg,#e6fbf1,#b8f2d6)",
+  blue: "linear-gradient(135deg,#e6f3ff,#a9d6ff)", lavender: "linear-gradient(135deg,#f1eaff,#cdb4ff)",
+  rainbow: "linear-gradient(135deg,#ffe3ee,#fffbe0,#e3fbef,#e1f1ff,#ece3ff)"
+};
+const FGS = { plum: "#4a4063", berry: "#a63a62", ocean: "#2f5d8a", forest: "#2f6b4f", cocoa: "#6b4a3a" };
+const FONTS = { nunito: '"Nunito",sans-serif', fredoka: '"Fredoka",sans-serif', gochi: '"Gochi Hand",cursive' };
+const pickKey = (map, k) => Object.prototype.hasOwnProperty.call(map, k) ? map[k] : null;
+let sty = { bg: "none", fg: "plum", font: "nunito" }, photoData = null;
+
+// Keeps only one panel open at a time (Emoji / Draw / Music / Style)
+function closeAll(except) {
+  if (except !== "emoji") { emojiPanel.classList.add("hidden"); $("emoji-toggle").classList.remove("on"); }
+  if (except !== "draw") { drawPanel.classList.add("hidden"); studentCard.classList.remove("wide"); $("draw-toggle").classList.remove("on"); }
+  if (except !== "music") closeDrawer();
+  if (except !== "style") { $("style-panel").classList.add("hidden"); $("style-toggle").classList.remove("on"); }
+}
+
+function mkSwatches(boxId, map, key, label) {
+  Object.keys(map).forEach(k => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "stl" + (key === "font" ? " pill" : ""); b.dataset.k = k;
+    b.setAttribute("aria-label", label + " " + k);
+    if (key === "font") { b.textContent = "Aa"; b.style.fontFamily = map[k]; } else b.style.background = map[k];
+    b.onclick = () => { sty[key] = k; applyStyle(); };
+    $(boxId).append(b);
+  });
+}
+function applyStyle() {                            // live preview inside the message box
+  ta.style.background = BGS[sty.bg]; ta.style.color = FGS[sty.fg]; ta.style.fontFamily = FONTS[sty.font];
+  [["bg-sw", "bg"], ["fg-sw", "fg"], ["font-sw", "font"]].forEach(([id, key]) =>
+    document.querySelectorAll("#" + id + " .stl").forEach(b => b.classList.toggle("on", b.dataset.k === sty[key])));
+  $("style-toggle").classList.toggle("has", sty.bg !== "none" || sty.fg !== "plum" || sty.font !== "nunito");
+}
+mkSwatches("bg-sw", BGS, "bg", "Background"); mkSwatches("fg-sw", FGS, "fg", "Text color"); mkSwatches("font-sw", FONTS, "font", "Font");
+applyStyle();
+$("style-toggle").onclick = e => { const open = $("style-panel").classList.toggle("hidden") === false; e.currentTarget.classList.toggle("on", open); if (open) closeAll("style"); };
+
+// Add picture: respectful alert -> choose file -> shrink + re-encode as JPEG
+$("photo-toggle").onclick = () => { closeAll("photo"); $("respect").classList.remove("hidden"); };
+$("respect-cancel").onclick = () => $("respect").classList.add("hidden");
+$("respect-ok").onclick = () => { $("respect").classList.add("hidden"); $("photo-file").click(); };
+$("photo-file").addEventListener("change", async () => {
+  const f = $("photo-file").files[0]; $("photo-file").value = "";
+  if (!f) return;
+  if (!/^image\//.test(f.type) || f.size > 20 * 1024 * 1024) { statusEl.textContent = "Please choose a picture under 20 MB."; return; }
+  try { photoData = await shrinkImage(f); } catch (e) { console.error(e); statusEl.textContent = "Couldn't use that picture. Try another one."; return; }
+  showPhoto();
+});
+function shrinkImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      for (const [max, q] of [[900, .72], [800, .6], [640, .5], [480, .45]]) {
+        const sc = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas"); c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+        const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.drawImage(img, 0, 0, c.width, c.height);
+        const d = c.toDataURL("image/jpeg", q);   // re-encoding also strips hidden photo data (GPS location, camera info)
+        if (d.length < 280000) return resolve(d);
+      }
+      reject(new Error("picture too big"));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+    img.src = url;
+  });
+}
+function showPhoto() {
+  const box = $("photo-prev"); box.innerHTML = ""; box.classList.toggle("hidden", !photoData);
+  $("photo-toggle").classList.toggle("has", !!photoData);
+  if (!photoData) return;
+  const im = document.createElement("img"); im.src = photoData; im.alt = "Your picture";
+  const t = document.createElement("span"); t.textContent = "Picture added";
+  const x = document.createElement("button"); x.type = "button"; x.className = "sbtn"; x.textContent = "Remove";
+  x.onclick = () => { photoData = null; showPhoto(); };
+  box.append(im, t, x);
+}
+function resetExtras() {
+  sty = { bg: "none", fg: "plum", font: "nunito" }; applyStyle(); photoData = null; showPhoto();
+  $("style-panel").classList.add("hidden"); $("style-toggle").classList.remove("on");
+}
+
+// Admin: a picture/drawing stays blurred until the toggle is switched on
+function revealBlock(src, rid, what) {
+  const box = document.createElement("div");
+  const wrap = document.createElement("div"); wrap.className = "reveal";
+  const img = document.createElement("img"); img.src = src; img.alt = what; img.className = "blur"; wrap.append(img);
+  const tgl = document.createElement("div"); tgl.className = "tgl-row";
+  tgl.innerHTML = '<div class="checkbox-wrapper-5"><div class="tgl"><input id="' + rid + '" type="checkbox"><label for="' + rid + '"></label></div></div><span>Show ' + what + '</span>';
+  const label = tgl.querySelector("span");
+  tgl.querySelector("input").onchange = e => { img.classList.toggle("blur", !e.target.checked); label.textContent = (e.target.checked ? "Hide " : "Show ") + what; };
+  box.append(wrap, tgl); return box;
+}
+
+/* ============ 6. ADMIN LOGIN ============ */
+const loginBox = $("login"), pass = $("pass"), loginErr = $("login-err");
+async function openAdmin() {
+  const { data } = await db.auth.getSession();
+  if (data.session) return enterDashboard();
+  loginErr.textContent = ""; pass.value = ""; loginBox.classList.remove("hidden"); pass.focus();
+}
+async function submitLogin() {
+  loginErr.textContent = "";
+  const { error } = await db.auth.signInWithPassword({ email: ADMIN_EMAIL, password: pass.value });
+  if (error) { loginErr.textContent = /invalid login/i.test(error.message) ? "Wrong password. Try again." : error.message; return; }
+  loginBox.classList.add("hidden"); enterDashboard();
+}
+adminToggle.onclick = openAdmin;
+$("login-ok").onclick = submitLogin;
+$("login-cancel").onclick = () => loginBox.classList.add("hidden");
+pass.addEventListener("keydown", e => { if (e.key === "Enter") submitLogin(); });
+$("logout").onclick = async () => { await db.auth.signOut(); $("list").innerHTML = ""; switchTo("student"); };
+
+/* ============ 7. ADMIN DASHBOARD: list + delete ============ */
+function enterDashboard() { switchTo("admin"); loadMessages(); }
+const list = $("list");
+
+function updateCount() {
+  const n = list.querySelectorAll(".msg").length;
+  $("count").textContent = n + (n === 1 ? " message" : " messages");
+  if (!n && !list.querySelector(".empty")) list.innerHTML = '<div class="empty">No messages yet. New feedback will show up here.</div>';
+}
+
+async function loadMessages() {
+  list.innerHTML = '<div class="empty">Loading messages...</div>';
+  const { data, error } = await db.from(TABLE).select("*").order("created_at", { ascending: false });
+  if (error) { list.innerHTML = '<div class="empty">Could not load messages. Check your RLS read policy.</div>'; return; }
+  list.innerHTML = "";
+  data.forEach((row, i) => {
+    const card = document.createElement("article"); card.className = "msg";
+    card.style.setProperty("--hd", CARD_COLORS[i % CARD_COLORS.length]);   // a different header colour per message
+
+    // Coloured header: who it's for, when it was sent, delete button
+    const head = document.createElement("div"); head.className = "msg-head";
+    const info = document.createElement("div");
+    const title = document.createElement("div"); title.className = "msg-title";
+    title.textContent = row.recipient ? "To: " + row.recipient : "Anonymous message";   // textContent = no script injection
+    const time = document.createElement("time"); time.dateTime = row.created_at;
+    time.textContent = new Date(row.created_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+    info.append(title, time);
+    const del = document.createElement("button"); del.className = "del"; del.innerHTML = ico("trash"); del.title = "Delete message"; del.setAttribute("aria-label", "Delete message");
+    del.onclick = () => deleteMessage(row.id, card);
+    head.append(info, del);
+
+    // White body: the message, then the drawing (blurred until the toggle is switched on)
+    const body = document.createElement("div"); body.className = "msg-body";
+    const bgv = pickKey(BGS, row.style_bg); if (bgv) body.style.background = bgv;   // the sender's chosen soft background
+    if (row.content) {
+      const p = document.createElement("p"); p.textContent = row.content;
+      const fgv = pickKey(FGS, row.style_fg), fnv = pickKey(FONTS, row.style_font);
+      if (fgv) p.style.color = fgv; if (fnv) p.style.fontFamily = fnv;
+      body.append(p);
+    }
+    // Drawing + picture sit side by side in one row (each stays blurred until its own toggle is switched on)
+    const media = document.createElement("div"); media.className = "media-row";
+    const rid0 = String(row.id).replace(/[^a-zA-Z0-9-]/g, "");
+    if (row.drawing && row.drawing.startsWith("data:image/jpeg;base64,")) media.append(revealBlock(row.drawing, "tg-" + rid0, "drawing"));
+    if (row.photo && row.photo.startsWith("data:image/jpeg;base64,")) media.append(revealBlock(row.photo, "tp-" + rid0, "picture"));
+    if (media.children.length) body.append(media);
+    if (row.song_preview && PREVIEW_RE.test(row.song_preview)) body.append(previewBlock(row));   // song picked from search
+    if (row.music) { const info = parseSong(row.music); if (info) body.append(songBlock(info)); }   // pasted Spotify/YouTube link
+    card.append(head, body); list.append(card);
+  });
+  updateCount();
+}
+
+async function deleteMessage(id, card) {
+  if (!confirm("Delete this message? This can't be undone.")) return;
+  const { data, error } = await db.from(TABLE).delete().eq("id", id).select("id");
+  if (error || !data.length) { alert("Couldn't delete. Run supabase-update.sql in Supabase first (it adds the delete permission)."); return; }
+  card.classList.add("gone"); setTimeout(() => { card.remove(); updateCount(); }, 300);
+}
+$("refresh").onclick = loadMessages;
+["refresh", "logout"].forEach(id => $(id).addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $(id).click(); } }));
+</script>
+</body>
+</html>
